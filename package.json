@@ -1,0 +1,11 @@
+{
+  "type": "module",
+  "dependencies": {
+    "@fast-csv/parse": "^5.0.2",
+    "csv-batch": "^2.0.6",
+    "csv-parser": "^3.2.0",
+    "iconv-lite": "^0.6.3",
+    "jschardet": "^3.1.4",
+    "mysql2": "^3.14.1"
+  }
+}
