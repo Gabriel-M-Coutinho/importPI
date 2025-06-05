@@ -1,4 +1,7 @@
-export default function process(batch){
+
+
+
+export default function processCnae(batch){
     const list = [];
         batch.forEach(element => {
         let result= { code: null, description: null};
@@ -7,7 +10,6 @@ export default function process(batch){
         list.push(result)
     });
     addToDatabase(list)
-
 
 }
 

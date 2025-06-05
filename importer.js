@@ -2,14 +2,23 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import csv from '@fast-csv/parse';
+import processCnae from "./imports/cnaes.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const directoryPath = '/mnt/d/cnpjoto/';
 const batchSize = 10000;
 
-function processCSVFile(filePath) {
+
+const processors = {
+    cnaes: processCnae,
+    // estabelecimentos: processEstabelecimentos,
+    // pais: processPais,
+    // socios: processSocios,
+    // empresas: processEmpresas,
+};
+
+function processCSVFile(filePath, type) {
     return new Promise((resolve, reject) => {
         const decoded = fs.readFileSync(filePath, 'latin1'); 
 
@@ -19,43 +28,49 @@ function processCSVFile(filePath) {
             .on('data', row => {
                 batch.push(row);
                 if (batch.length >= batchSize) {
-                    processBatch(batch);
+                    processBatch(batch, type);
                     batch = [];
                 }
             })
             .on('end', () => {
-                if (batch.length > 0) processBatch(batch);
+                if (batch.length > 0) processBatch(batch, type);
                 resolve();
             })
             .on('error', reject);
     });
 }
 
-function processBatch(batch) {
+function processBatch(batch, type) {
+    const handler = processors[type];
 
-
-    batch.forEach(element => {
-        let result= { code: null, description: null};
-        result.code = Number(element[0]);
-        result.description = element[1];
-        console.log(result)
-    });
-    
+    if (handler) {
+        handler(batch);
+    } else {
+        console.warn(`Nenhum processador definido para o tipo: ${type}`);
+    }
 }
 
-function readCSVFilesInBatch(directoryPath) {
+export default function readCSVFilesInBatch(directoryPath, type) {
     fs.readdir(directoryPath, (err, files) => {
         if (err) return console.error('Erro ao ler diretório:', err);
 
-        const csvFiles = files.filter(file => file.endsWith('CSV'));
+        const csvFiles = files.filter(file => file.toLowerCase().endsWith('csv'));
+
+        if (csvFiles.length === 0) {
+            console.warn('Nenhum arquivo CSV encontrado.');
+            return;
+        }
 
         csvFiles.forEach(file => {
             const filePath = path.join(directoryPath, file);
-            processCSVFile(filePath).catch(err => {
+            console.log(`Iniciando processamento de: ${file}`);
+            processCSVFile(filePath, type).catch(err => {
                 console.error(`Erro ao processar ${filePath}:`, err);
             });
         });
     });
 }
 
-readCSVFilesInBatch(directoryPath);
+
+
+
