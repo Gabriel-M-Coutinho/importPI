@@ -1,4 +1,4 @@
-export default function process(batch){
+export default function processEstabelecimentos(batch){
     const list = [];
         batch.forEach(element => {
         /*let result= { code: null, description: null};
