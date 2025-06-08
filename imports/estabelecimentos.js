@@ -66,5 +66,61 @@ function dataTransform(element) {
 }
 
 function addToDatabase(list) {
-    console.log("Adicionado no banco com sucesso:", list);
+    
+    /* Criar uma conexão e criar os dados de entrada no map para enviar em lote ao banco
+     const connection = await pool.getConnection();
+
+    const values = list.map(item => [
+        item.cnpj_basico,
+        item.cnpj_ordem,
+        item.cnpj_dv,
+        item.matriz_filial,
+        item.nome_fantasia,
+        item.situacao_cadastral,
+        item.data_situacao_cadastral,
+        item.data_evento_situacao_cadastral,
+        item.motivo_situacao_cadastral,
+        item.nome_cidade_exterior,
+        item.pais,
+        item.data_inicio_atividade,
+        item.cnae_fiscal_principal,
+        item.cnae_fiscal_secundaria,
+        item.tipo_logradouro,
+        item.logradouro,
+        item.numero,
+        item.complemento,
+        item.bairro,
+        item.cep,
+        item.uf,
+        item.municipio,
+        item.ddd1,
+        item.telefone1,
+        item.ddd2,
+        item.telefone2,
+        item.ddd_fax,
+        item.fax,
+        item.email,
+        item.situacao_especial,
+        item.data_situacao_especial
+    ]);
+
+    const sql = `
+        INSERT INTO estabelecimentos (
+            cnpj_basico, cnpj_ordem, cnpj_dv, matriz_filial, nome_fantasia, situacao_cadastral,
+            data_situacao_cadastral, data_evento_situacao_cadastral, motivo_situacao_cadastral,
+            nome_cidade_exterior, pais, data_inicio_atividade, cnae_fiscal_principal,
+            cnae_fiscal_secundaria, tipo_logradouro, logradouro, numero, complemento,
+            bairro, cep, uf, municipio, ddd1, telefone1, ddd2, telefone2, ddd_fax,
+            fax, email, situacao_especial, data_situacao_especial
+        ) VALUES ?
+    `;
+
+    try {
+        await connection.query(sql, [values]);
+        console.log(`✅ Inseridos ${values.length} registros no banco`);
+    } catch (err) {
+        console.error('❌ Erro ao inserir:', err);
+    } finally {
+        connection.release();
+    }*/
 }
