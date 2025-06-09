@@ -1,54 +1,46 @@
-export default function processEstabelecimentos(batch) {
-    const list = [];
+import pool from "../config/db.js";
 
-    batch.forEach(element => {
-        let result = {};
+export default async function processEstabelecimentos(batch) {
+    const list = batch.map(element => {
+        const dataSituacaoCadastral = dataTransform(element[6]);
+        const dataInicioAtividade = dataTransform(element[10]);
+        const dataSituacaoEspecial = dataTransform(element[29]);
 
-        result.cnpj_basico = element[0];
-        result.cnpj_ordem = element[1];
-        result.cnpj_dv = element[2];
-        result.matriz_filial = Number(element[3]);
-        result.nome_fantasia = element[4];
-        result.situacao_cadastral = Number(element[5]);
-
-        let dataSituacaoCadastral = dataTransform(element[6]);
-        if (dataSituacaoCadastral instanceof Error) {
-            console.error(dataSituacaoCadastral.message);
-        } else {
-            result.data_situacao_cadastral = dataSituacaoCadastral;
-        }
-
-
-        result.data_evento_situacao_cadastral = dataTransform(element[7]);
-        result.motivo_situacao_cadastral = element[8];
-        result.nome_cidade_exterior = element[9];
-        result.pais = element[10];
-        result.data_inicio_atividade = dataTransform(element[11]);
-        result.cnae_fiscal_principal = element[12];
-        result.cnae_fiscal_secundaria = element[13];
-        result.tipo_logradouro = element[14];
-        result.logradouro = element[15];
-        result.numero = element[16];
-        result.complemento = element[17];
-        result.bairro = element[18];
-        result.cep = element[19];
-        result.uf = element[20];
-        result.municipio = element[21];
-        result.ddd1 = element[22];
-        result.telefone1 = element[23];
-        result.ddd2 = element[24];
-        result.telefone2 = element[25];
-        result.ddd_fax = element[26];
-        result.fax = element[27];
-        result.email = element[28];
-        result.situacao_especial = element[29];
-        result.data_situacao_especial = dataTransform(element[30]);
-
-        list.push(result);
+        return {
+            cnpj_basico: element[0],
+            cnpj_ordem: element[1],
+            cnpj_dv: element[2],
+            matriz_filial: Number(element[3]),
+            nome_fantasia: element[4],
+            situacao_cadastral: Number(element[5]),
+            data_situacao_cadastral: dataSituacaoCadastral,
+            motivo_situacao_cadastral: element[7],
+            nome_cidade_exterior: element[8],
+            pais: element[9],
+            data_inicio_atividade: dataInicioAtividade,
+            cnae_fiscal_principal: element[11],
+            cnae_fiscal_secundaria: element[12],
+            tipo_logradouro: element[13],
+            logradouro: element[14],
+            numero: element[15],
+            complemento: element[16],
+            bairro: element[17],
+            cep: element[18],
+            uf: element[19],
+            municipio: element[20],
+            ddd1: element[21],
+            telefone1: element[22],
+            ddd2: element[23],
+            telefone2: element[24],
+            ddd_fax: element[25],
+            fax: element[26],
+            email: element[27],
+            situacao_especial: element[28],
+            data_situacao_especial: dataSituacaoEspecial,
+        };
     });
 
-    addToDatabase(list);
-
+    await addToDatabase(list);
 }
 
 function dataTransform(element) {
@@ -70,21 +62,20 @@ async function addToDatabase(list) {
     /*Criar uma conexão e criar os dados de entrada no map para enviar em lote ao banco*/
     const connection = await pool.getConnection();
 
-    const values = list.map(item => [ 
-        item.cnae_fiscal_principal,
-        item.cnpj_basico,
+    const values = list.map(item => [
+        //item.cnae_fiscal_principal,
+        //item.cnpj_basico,
         item.cnpj_ordem,
         item.cnpj_dv,
         item.matriz_filial,
         item.nome_fantasia,
         item.situacao_cadastral,
         item.data_situacao_cadastral,
-        item.data_evento_situacao_cadastral,
-        item.motivo_situacao_cadastral,
+        //item.motivo_situacao_cadastral,
         item.nome_cidade_exterior,
-        item.pais,
-        item.data_inicio_atividade, 
-        item.cnae_fiscal_secundaria,
+        //item.pais,
+        item.data_inicio_atividade,
+        //item.cnae_fiscal_secundaria,
         item.tipo_logradouro,
         item.logradouro,
         item.numero,
@@ -101,57 +92,49 @@ async function addToDatabase(list) {
         item.fax,
         item.email,
         item.situacao_especial,
-        item.data_situacao_especial 
+        item.data_situacao_especial,
     ]);
 
-    const sql = ` 
+    const sql = `
         INSERT INTO establishments (
-        cnae_id,
-        registration_sr_id,
-        country_id,
-        legal_nature_id,
-    
-        base_cnpj_establishment,
-        order_cnpj_establishment,
-        dv_cnpj_establishment,
-        legal_name_establishment,
-        headquarters_branch_establishment,
-        trade_name_establishment,
-        registration_status_establishment,
-        registration_status_date_establishment,
-        foreign_city_name_establishment,
-        activity_start_date_establishment,
-        street_type_establishment,
-        street_establishment,
-        number_establishment,
-        complement_establishment,
-        neighborhood_establishment,
-        zip_code_establishment,
-        state_establishment,
-        municipality_establishment,
-        ddd1_establishment,
-        phone1_establishment,
-        ddd2_establishment,
-        phone2_establishment,
-        ddd_fax_establishment,
-        fax_establishment,
-        email_establishment,
-        special_situation_establishment,
-        special_situation_date_establishment,
-        legal_nature_establishment,
-        responsible_qualification_establishment,
-        social_capital_establishment,
-        company_size_establishment,
-        federative_entity_establishment
-    ) VALUES ?
-
-    `;
+            `+/*cnae_id,
+            base_cnpj_establishment,*/`
+            order_cnpj_establishment,
+            dv_cnpj_establishment,
+            headquarters_branch_establishment,
+            trade_name_establishment,
+            registration_status_establishment,
+            registration_status_date_establishment,
+            `+/*registration_status_reason_establishment,*/`
+            foreign_city_name_establishment,
+            `+/*country_id,*/`
+            activity_start_date_establishment,
+            `+/*secondary_cnae_establishment,*/`
+            street_type_establishment,
+            street_establishment,
+            number_establishment,
+            complement_establishment,
+            neighborhood_establishment,
+            zip_code_establishment,
+            state_establishment,
+            municipality_establishment,
+            ddd1_establishment,
+            phone1_establishment,
+            ddd2_establishment,
+            phone2_establishment,
+            ddd_fax_establishment,
+            fax_establishment,
+            email_establishment,
+            special_situation_establishment,
+            special_situation_date_establishment
+        ) VALUES ?`;
+         console.log(values[6])
 
     try {
         await connection.query(sql, [values]);
         console.log(`✅ Inseridos ${values.length} registros no banco`);
     } catch (err) {
-        console.error('❌ Erro ao inserir:', err);
+        console.error("❌ Erro ao inserir:", err);
     } finally {
         connection.release();
     }

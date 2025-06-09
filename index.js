@@ -1,9 +1,13 @@
 import readCSVFilesInBatch from "./importer.js"
 
-function qualificacoes_socio(){
-    const tipo = "qualificacoes_socio";
-    const raiz = "./arquivos/Cnaes/";
-    readCSVFilesInBatch(raiz,tipo);
+async function qualificacoes_socio() {
+    try {
+        const tipo = "qualificacoes_socio";
+        const raiz = "./arquivos/Cnaes/";
+        await readCSVFilesInBatch(raiz, tipo);
+    } catch (err) {
+        console.error("Erro em qualificacoes_socio():", err);
+    }
 }
 
 async function cnaes() {
@@ -17,49 +21,74 @@ async function cnaes() {
     }
 }
 
-function paises(){
-    const tipo = "paises";
-    const raiz = "./arquivos/paises/";
-    readCSVFilesInBatch(raiz,tipo);
+async function paises() {
+    try {
+        const tipo = "paises";
+        const raiz = "./arquivos/paises/";
+        await readCSVFilesInBatch(raiz, tipo);
+    } catch (err) {
+        console.error("Erro em paises():", err);
+    }
 }
 
-function motivosSC(){
-    const tipo = "motivosSC";
-    const raiz = "./arquivos/motivosSC/";
-    readCSVFilesInBatch(raiz,tipo);
+async function motivosSC() {
+    try {
+        const tipo = "motivosSC";
+        const raiz = "./arquivos/motivosSC/";
+        await readCSVFilesInBatch(raiz, tipo);
+    } catch (err) {
+        console.error("Erro em motivosSC():", err);
+    }
 }
 
-function naturezas_juridica(){
-    const tipo = "naturezas_juridica";
-    const raiz = "./arquivos/naturezas_juridica/";
-    readCSVFilesInBatch(raiz,tipo);
+async function naturezas_juridica() {
+    try {
+        const tipo = "naturezas_juridica";
+        const raiz = "./arquivos/naturezas_juridica/";
+        await readCSVFilesInBatch(raiz, tipo);
+    } catch (err) {
+        console.error("Erro em naturezas_juridica():", err);
+    }
 }
 
-function socios(){
-    const tipo = "socios";
-    const raiz = "./arquivos/socios/";
-    readCSVFilesInBatch(raiz,tipo);
+async function socios() {
+    try {
+        const tipo = "socios";
+        const raiz = "./arquivos/socios/";
+        await readCSVFilesInBatch(raiz, tipo);
+    } catch (err) {
+        console.error("Erro em socios():", err);
+    }
 }
 
-function empresas(){
-    const tipo = "empresas";
-    const raiz = "./arquivos/Empresas/";
-    readCSVFilesInBatch(raiz,tipo);
+async function empresas() {
+    try {
+        const tipo = "empresas";
+        const raiz = "./arquivos/Empresas/";
+        await readCSVFilesInBatch(raiz, tipo);
+    } catch (err) {
+        console.error("Erro em empresas():", err);
+    }
 }
 
-function estabelecimentos(){
-    const tipo = "estabelecimentos";
-    const raiz = "./arquivos/estabelecimentos/";
-    readCSVFilesInBatch(raiz,tipo);
+async function estabelecimentos() {
+    try {
+        const tipo = "estabelecimentos";
+        const raiz = "./arquivos/Estabelecimentos/";
+        await readCSVFilesInBatch(raiz, tipo);
+    } catch (err) {
+        console.error("Erro em estabelecimentos():", err);
+    }
 }
+
 
 async function main() {
-    await cnaes();
+    //await cnaes();
     // await qualificacoes_socio();
     // await paises();
-    await empresas();
+    //await empresas();
     // await socios();
-    // await estabelecimentos();
+    await estabelecimentos();
 }
 
 main().then(() => {
