@@ -28,12 +28,12 @@ async function addToDatabase(list) {
 
     const sql = `
         INSERT INTO companies (
-            base_cnpj_establishment,
-            legal_name_establishment,
-            responsible_qualification_establishment,
-            social_capital_establishment,
-            company_size_establishment,
-            federative_entity_establishment
+            base_cnpj_company,
+            legal_name_company,
+            responsible_qualification_company,
+            social_capital_company,
+            company_size_company,
+            federative_entity_company
         ) VALUES ?`;
 
     try {

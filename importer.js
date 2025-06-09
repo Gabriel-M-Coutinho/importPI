@@ -8,7 +8,7 @@ import processEmpresas from "./imports/empresas.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const batchSize = 1000; 
+const batchSize = 10000; 
 
 
 const processors = {
