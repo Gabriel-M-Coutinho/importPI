@@ -9,7 +9,7 @@ import processEstabelecimentos from "./imports/estabelecimentos.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const batchSize = 10000; 
+const batchSize = 1000;
 
 
 const processors = {
@@ -23,8 +23,8 @@ const processors = {
 
 function processCSVFile(filePath, type) {
     return new Promise((resolve, reject) => {
-        const decoded = fs.readFileSync(filePath, 'latin1');
-        const parser = csv.parseString(decoded, { delimiter: ';', headers: false });
+        const stream = fs.createReadStream(filePath, { encoding: 'latin1' }); // continua com encoding se precisar
+        const parser = csv.parse({ delimiter: ';', headers: false });
 
         let batch = [];
 
@@ -33,7 +33,11 @@ function processCSVFile(filePath, type) {
 
             if (batch.length >= batchSize) {
                 parser.pause(); 
-                await processBatch(batch, type);
+                try {
+                    await processBatch(batch, type);
+                } catch (err) {
+                    return reject(err);
+                }
                 batch = [];
                 parser.resume(); 
             }
@@ -41,12 +45,18 @@ function processCSVFile(filePath, type) {
 
         parser.on('end', async () => {
             if (batch.length > 0) {
-                await processBatch(batch, type);
+                try {
+                    await processBatch(batch, type);
+                } catch (err) {
+                    return reject(err);
+                }
             }
             resolve();
         });
 
         parser.on('error', reject);
+
+        stream.pipe(parser);
     });
 }
 
@@ -63,7 +73,9 @@ async function processBatch(batch, type) {
 export default async function readCSVFilesInBatch(directoryPath, type) {
     try {
         const files = await fs.promises.readdir(directoryPath);
-        const csvFiles = files.filter(file => file.toLowerCase().endsWith('csv'));
+        const csvFiles = files.filter(file => 
+            file.toLowerCase().endsWith('csv') || file.toLowerCase().includes('estabele')
+        );
 
         if (csvFiles.length === 0) {
             console.warn('Nenhum arquivo CSV encontrado.');

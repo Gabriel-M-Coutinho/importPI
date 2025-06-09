@@ -15,7 +15,7 @@ async function addToDatabase(list) {
 
     const sql = `
         INSERT INTO cnaes (
-            code_cnae,
+            id_cnae,
             description_cnae
         ) VALUES ?`;
 

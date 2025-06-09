@@ -83,7 +83,7 @@ async function estabelecimentos() {
 
 
 async function main() {
-    //await cnaes();
+    await cnaes();
     // await qualificacoes_socio();
     // await paises();
     //await empresas();

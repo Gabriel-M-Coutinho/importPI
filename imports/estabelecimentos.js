@@ -1,10 +1,20 @@
 import pool from "../config/db.js";
 
+function dataMySQL(data){
+    if(data === ''){
+        return '';
+    }
+    const year = data.substring(0, 4);
+    const month = data.substring(4, 6);
+    const day = data.substring(6, 8);
+    return `${year}-${month}-${day}`;
+}
+
 export default async function processEstabelecimentos(batch) {
     const list = batch.map(element => {
-        const dataSituacaoCadastral = dataTransform(element[6]);
-        const dataInicioAtividade = dataTransform(element[10]);
-        const dataSituacaoEspecial = dataTransform(element[29]);
+        const dataSituacaoCadastral = dataMySQL(element[6]);
+        const dataInicioAtividade = dataMySQL(element[10]);
+        const dataSituacaoEspecial = dataMySQL(element[29]);
 
         return {
             cnpj_basico: element[0],
@@ -18,7 +28,7 @@ export default async function processEstabelecimentos(batch) {
             nome_cidade_exterior: element[8],
             pais: element[9],
             data_inicio_atividade: dataInicioAtividade,
-            cnae_fiscal_principal: element[11],
+            cnae_fiscal_principal: Number(element[11]),
             cnae_fiscal_secundaria: element[12],
             tipo_logradouro: element[13],
             logradouro: element[14],
@@ -43,18 +53,11 @@ export default async function processEstabelecimentos(batch) {
     await addToDatabase(list);
 }
 
-function dataTransform(value) {
-    if (typeof value !== "string" && typeof value !== "number") return null;
-
-    const data = new Date(value);
-    return isNaN(data.getTime()) ? null : data;
-}
-
 async function addToDatabase(list) {
     const connection = await pool.getConnection();
 
     const values = list.map(item => [
-        //item.cnae_fiscal_principal,
+        item.cnae_fiscal_principal,
         //item.cnpj_basico,
         item.cnpj_ordem,
         item.cnpj_dv,
@@ -88,8 +91,8 @@ async function addToDatabase(list) {
 
     const sql = `
         INSERT INTO establishments (
-            `+/*cnae_id,
-            base_cnpj_establishment,*/`
+            cnae_id,
+            `+/*base_cnpj_establishment,*/`
             order_cnpj_establishment,
             dv_cnpj_establishment,
             headquarters_branch_establishment,
@@ -119,7 +122,6 @@ async function addToDatabase(list) {
             special_situation_establishment,
             special_situation_date_establishment
         ) VALUES ?`;
-         console.log(values[6])
 
     try {
         await connection.query(sql, [values]);
