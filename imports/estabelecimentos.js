@@ -53,20 +53,6 @@ export default async function processEstabelecimentos(batch) {
     await addToDatabase(list);
 }
 
-function dataTransform(element) {
-    if (typeof element !== 'string' && typeof element !== 'number') {
-        return new Error('O elemento deve ser uma string ou um número.');
-    }
-
-    let data = new Date(element);
-
-    if (isNaN(data.getTime())) {
-        return new Error('O elemento não pode ser convertido em uma data válida.');
-    }
-
-    return data;
-}
-
 async function addToDatabase(list) {
     
     /*Criar uma conexão e criar os dados de entrada no map para enviar em lote ao banco*/
