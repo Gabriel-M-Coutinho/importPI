@@ -4,6 +4,7 @@ import { fileURLToPath } from 'url';
 import csv from '@fast-csv/parse';
 import processCnae from "./imports/cnaes.js";
 import processEmpresas from "./imports/empresas.js";
+import processEstabelecimentos from "./imports/estabelecimentos.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -16,7 +17,8 @@ const processors = {
     // estabelecimentos: processEstabelecimentos,
     // pais: processPais,
     // socios: processSocios,
-    empresas: processEmpresas
+    empresas: processEmpresas,
+    estabelecimentos: processEstabelecimentos
 };
 
 function processCSVFile(filePath, type) {

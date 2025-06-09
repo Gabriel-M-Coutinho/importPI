@@ -3,9 +3,8 @@ import pool from "../config/db.js";
 export default async function processEstabelecimentos(batch) {
     const list = batch.map(element => {
         const dataSituacaoCadastral = dataTransform(element[6]);
-        const dataEventoSituacaoCadastral = dataTransform(element[7]);
-        const dataInicioAtividade = dataTransform(element[11]);
-        const dataSituacaoEspecial = dataTransform(element[30]);
+        const dataInicioAtividade = dataTransform(element[10]);
+        const dataSituacaoEspecial = dataTransform(element[29]);
 
         return {
             cnpj_basico: element[0],
@@ -15,29 +14,28 @@ export default async function processEstabelecimentos(batch) {
             nome_fantasia: element[4],
             situacao_cadastral: Number(element[5]),
             data_situacao_cadastral: dataSituacaoCadastral,
-            data_evento_situacao_cadastral: dataEventoSituacaoCadastral,
-            motivo_situacao_cadastral: element[8],
-            nome_cidade_exterior: element[9],
-            pais: element[10],
+            motivo_situacao_cadastral: element[7],
+            nome_cidade_exterior: element[8],
+            pais: element[9],
             data_inicio_atividade: dataInicioAtividade,
-            cnae_fiscal_principal: element[12],
-            cnae_fiscal_secundaria: element[13],
-            tipo_logradouro: element[14],
-            logradouro: element[15],
-            numero: element[16],
-            complemento: element[17],
-            bairro: element[18],
-            cep: element[19],
-            uf: element[20],
-            municipio: element[21],
-            ddd1: element[22],
-            telefone1: element[23],
-            ddd2: element[24],
-            telefone2: element[25],
-            ddd_fax: element[26],
-            fax: element[27],
-            email: element[28],
-            situacao_especial: element[29],
+            cnae_fiscal_principal: element[11],
+            cnae_fiscal_secundaria: element[12],
+            tipo_logradouro: element[13],
+            logradouro: element[14],
+            numero: element[15],
+            complemento: element[16],
+            bairro: element[17],
+            cep: element[18],
+            uf: element[19],
+            municipio: element[20],
+            ddd1: element[21],
+            telefone1: element[22],
+            ddd2: element[23],
+            telefone2: element[24],
+            ddd_fax: element[25],
+            fax: element[26],
+            email: element[27],
+            situacao_especial: element[28],
             data_situacao_especial: dataSituacaoEspecial,
         };
     });
@@ -56,20 +54,19 @@ async function addToDatabase(list) {
     const connection = await pool.getConnection();
 
     const values = list.map(item => [
-        item.cnae_fiscal_principal,
-        item.cnpj_basico,
+        //item.cnae_fiscal_principal,
+        //item.cnpj_basico,
         item.cnpj_ordem,
         item.cnpj_dv,
         item.matriz_filial,
         item.nome_fantasia,
         item.situacao_cadastral,
         item.data_situacao_cadastral,
-        item.data_evento_situacao_cadastral,
-        item.motivo_situacao_cadastral,
+        //item.motivo_situacao_cadastral,
         item.nome_cidade_exterior,
-        item.pais,
+        //item.pais,
         item.data_inicio_atividade,
-        item.cnae_fiscal_secundaria,
+        //item.cnae_fiscal_secundaria,
         item.tipo_logradouro,
         item.logradouro,
         item.numero,
@@ -91,20 +88,19 @@ async function addToDatabase(list) {
 
     const sql = `
         INSERT INTO establishments (
-            cnae_id,
-            base_cnpj_establishment,
+            `+/*cnae_id,
+            base_cnpj_establishment,*/`
             order_cnpj_establishment,
             dv_cnpj_establishment,
             headquarters_branch_establishment,
             trade_name_establishment,
             registration_status_establishment,
             registration_status_date_establishment,
-            registration_status_event_date_establishment,
-            registration_status_reason_establishment,
+            `+/*registration_status_reason_establishment,*/`
             foreign_city_name_establishment,
-            country_id,
+            `+/*country_id,*/`
             activity_start_date_establishment,
-            secondary_cnae_establishment,
+            `+/*secondary_cnae_establishment,*/`
             street_type_establishment,
             street_establishment,
             number_establishment,
@@ -123,6 +119,7 @@ async function addToDatabase(list) {
             special_situation_establishment,
             special_situation_date_establishment
         ) VALUES ?`;
+         console.log(values[6])
 
     try {
         await connection.query(sql, [values]);

@@ -74,7 +74,7 @@ async function empresas() {
 async function estabelecimentos() {
     try {
         const tipo = "estabelecimentos";
-        const raiz = "./arquivos/estabelecimentos/";
+        const raiz = "./arquivos/Estabelecimentos/";
         await readCSVFilesInBatch(raiz, tipo);
     } catch (err) {
         console.error("Erro em estabelecimentos():", err);
@@ -83,12 +83,12 @@ async function estabelecimentos() {
 
 
 async function main() {
-    await cnaes();
+    //await cnaes();
     // await qualificacoes_socio();
     // await paises();
-    await empresas();
+    //await empresas();
     // await socios();
-    // await estabelecimentos();
+    await estabelecimentos();
 }
 
 main().then(() => {
