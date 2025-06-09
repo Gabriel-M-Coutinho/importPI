@@ -92,9 +92,9 @@ async function main() {
 }
 
 main().then(() => {
-    console.log("✅ Importação finalizada com sucesso.");
+    console.log("Importação finalizada com sucesso.");
     process.exit(0); 
 }).catch(err => {
-    console.error("❌ Erro na importação:", err);
+    console.error("Erro na importação:", err);
     process.exit(1);
 });

@@ -78,7 +78,7 @@ export default async function readCSVFilesInBatch(directoryPath, type) {
         );
 
         if (csvFiles.length === 0) {
-            console.warn('Nenhum arquivo CSV encontrado.');
+            console.warn('Nenhum arquivo CSV ou "estabele" encontrado.');
             return;
         }
 
