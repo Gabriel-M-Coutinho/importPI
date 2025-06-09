@@ -48,5 +48,19 @@ function estabelecimentos(){
     readCSVFilesInBatch(raiz,tipo);
 }
 
-empresas();
-//paises();
+async function main() {
+    await cnaes();
+    // await qualificacoes_socio();
+    // await paises();
+    await empresas();
+    // await socios();
+    // await estabelecimentos();
+}
+
+main().then(() => {
+    console.log("✅ Importação finalizada com sucesso.");
+    process.exit(0); 
+}).catch(err => {
+    console.error("❌ Erro na importação:", err);
+    process.exit(1);
+});

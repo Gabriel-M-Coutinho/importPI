@@ -21,40 +21,46 @@ const processors = {
 
 function processCSVFile(filePath, type) {
     return new Promise((resolve, reject) => {
-        const decoded = fs.readFileSync(filePath, 'latin1'); 
+        const decoded = fs.readFileSync(filePath, 'latin1');
+        const parser = csv.parseString(decoded, { delimiter: ';', headers: false });
 
         let batch = [];
 
-        csv.parseString(decoded, { delimiter: ';', headers: false })
-            .on('data', row => {
-                batch.push(row);
-                if (batch.length >= batchSize) {
-                    processBatch(batch, type);
-                    batch = [];
-                }
-            })
-            .on('end', () => {
-                if (batch.length > 0) processBatch(batch, type);
-                resolve();
-            })
-            .on('error', reject);
+        parser.on('data', async (row) => {
+            batch.push(row);
+
+            if (batch.length >= batchSize) {
+                parser.pause(); 
+                await processBatch(batch, type);
+                batch = [];
+                parser.resume(); 
+            }
+        });
+
+        parser.on('end', async () => {
+            if (batch.length > 0) {
+                await processBatch(batch, type);
+            }
+            resolve();
+        });
+
+        parser.on('error', reject);
     });
 }
 
-function processBatch(batch, type) {
+async function processBatch(batch, type) {
     const handler = processors[type];
 
     if (handler) {
-        handler(batch);
+        await handler(batch); 
     } else {
         console.warn(`Nenhum processador definido para o tipo: ${type}`);
     }
 }
 
-export default function readCSVFilesInBatch(directoryPath, type) {
-    fs.readdir(directoryPath, (err, files) => {
-        if (err) return console.error('Erro ao ler diretório:', err);
-
+export default async function readCSVFilesInBatch(directoryPath, type) {
+    try {
+        const files = await fs.promises.readdir(directoryPath);
         const csvFiles = files.filter(file => file.toLowerCase().endsWith('csv'));
 
         if (csvFiles.length === 0) {
@@ -62,12 +68,17 @@ export default function readCSVFilesInBatch(directoryPath, type) {
             return;
         }
 
-        csvFiles.forEach(file => {
+        const promises = csvFiles.map(file => {
             const filePath = path.join(directoryPath, file);
             console.log(`Iniciando processamento de: ${file}`);
-            processCSVFile(filePath, type).catch(err => {
+            return processCSVFile(filePath, type).catch(err => {
                 console.error(`Erro ao processar ${filePath}:`, err);
             });
         });
-    });
-} 
+
+        await Promise.all(promises);
+        console.log("✅ Todos os arquivos foram processados.");
+    } catch (err) {
+        console.error('Erro ao ler diretório:', err);
+    }
+}

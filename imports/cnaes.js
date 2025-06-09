@@ -1,25 +1,17 @@
 import pool from "../config/db.js";
 
+export default async function processCnae(batch) {
+    const list = batch.map(element => ({
+        code: Number(element[0]),
+        description: element[1]
+    }));
 
-export default function processCnae(batch){
-    const list = [];
-        batch.forEach(element => {
-        let result= { code: null, description: null};
-        result.code = Number(element[0]);
-        result.description = element[1];
-        list.push(result)
-    });
-    addToDatabase(list)
-
+    await addToDatabase(list);
 }
 
-async function addToDatabase(list){
-     const connection = await pool.getConnection();
-
-    const values = list.map(item => [
-        item.code,
-        item.description
-    ]);
+async function addToDatabase(list) {
+    const connection = await pool.getConnection();
+    const values = list.map(item => [item.code, item.description]);
 
     const sql = `
         INSERT INTO cnaes (
