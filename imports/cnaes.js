@@ -1,4 +1,4 @@
-
+import pool from "../config/db.js";
 
 
 export default function processCnae(batch){
@@ -13,6 +13,26 @@ export default function processCnae(batch){
 
 }
 
-function addToDatabase(list){
-    console.log("adionado no banco com sucesso")
+async function addToDatabase(list){
+     const connection = await pool.getConnection();
+
+    const values = list.map(item => [
+        item.code,
+        item.description
+    ]);
+
+    const sql = `
+        INSERT INTO cnaes (
+            code_cnae,
+            description_cnae
+        ) VALUES ?`;
+
+    try {
+        await connection.query(sql, [values]);
+        console.log(`✅ Inseridos ${values.length} registros no banco`);
+    } catch (err) {
+        console.error('❌ Erro ao inserir:', err);
+    } finally {
+        connection.release();
+    }
 }
