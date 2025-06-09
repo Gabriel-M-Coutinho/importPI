@@ -65,7 +65,7 @@ function dataTransform(element) {
     return data;
 }
 
-function addToDatabase(list) {
+async function addToDatabase(list) {
     
     /*Criar uma conexão e criar os dados de entrada no map para enviar em lote ao banco*/
     const connection = await pool.getConnection();

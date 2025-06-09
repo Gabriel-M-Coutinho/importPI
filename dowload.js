@@ -5,15 +5,13 @@ import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import cliProgress from 'cli-progress';
 
-// Corrigir __dirname para ESM
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const dataAtual = new Date();
 const ano = dataAtual.getFullYear();
-const mes = String(dataAtual.getMonth() + 1).padStart(2, '0');
 
-const baseUrl = `https://arquivos.receitafederal.gov.br/dados/cnpj/dados_abertos_cnpj/${ano}-05/`;
+const baseUrl = `https://arquivos.receitafederal.gov.br/dados/cnpj/dados_abertos_cnpj/${ano}-05/`; 
 
 const arquivos = [
   "Cnaes.zip", "Empresas0.zip", "Empresas1.zip", "Empresas2.zip", "Empresas3.zip",
@@ -27,17 +25,17 @@ const arquivos = [
   "Socios5.zip", "Socios6.zip", "Socios7.zip", "Socios8.zip", "Socios9.zip"
 ];
 
-const MAX_CONCURRENT_DOWNLOADS = 3;
+const MAX_CONCURRENT_DOWNLOADS = 2;
+const MAX_RETRY = 3;
 
-
-const barra = new cliProgress.SingleBar({
-  format: 'Dowloads: |{bar}| {value}/{total} arquivos',
+// Barra geral
+const barraGeral = new cliProgress.SingleBar({
+  format: 'Downloads totais: |{bar}| {value}/{total} arquivos',
   barCompleteChar: '\u2588',
   barIncompleteChar: '\u2591',
   hideCursor: true
 });
-barra.start(arquivos.length, 0);
-
+barraGeral.start(arquivos.length, 0);
 
 async function baixarArquivo(nomeArquivo) {
   const prefixo = nomeArquivo.replace(/[0-9]*\.zip$/, "").replace(".zip", "");
@@ -46,40 +44,92 @@ async function baixarArquivo(nomeArquivo) {
   const url = baseUrl + nomeArquivo;
 
   try {
+    // Verifica se já existe
+    if (await fs.pathExists(caminhoArquivo)) {
+      console.log(`✅ Arquivo já existe: ${nomeArquivo}`);
+      barraGeral.increment();
+      return;
+    }
+
     await fs.ensureDir(pastaDestino);
 
-    const response = await axios.get(url, { responseType: "stream" });
-    const writer = fs.createWriteStream(caminhoArquivo);
+    for (let tentativa = 1; tentativa <= MAX_RETRY; tentativa++) {
+      try {
+        const response = await axios.get(url, {
+          responseType: 'stream',
+          timeout: 600000, 
+        });
 
-    response.data.pipe(writer);
+        const totalLength = response.headers['content-length'];
+        const totalMB = totalLength ? (totalLength / 1024 / 1024).toFixed(2) : 'Desconhecido';
 
-    await new Promise((resolve, reject) => {
-      writer.on("finish", resolve);
-      writer.on("error", reject);
-    });
+        const progressBar = new cliProgress.SingleBar({
+          format: `${nomeArquivo} |{bar}| {percentage}% | {downloadedMB}MB de ${totalMB}MB`,
+          barCompleteChar: '\u2588',
+          barIncompleteChar: '\u2591',
+          hideCursor: true
+        });
+
+        progressBar.start(totalLength ? parseInt(totalLength) : 100, 0, {
+          downloadedMB: '0.00'
+        });
+
+        let downloaded = 0;
+        const writer = fs.createWriteStream(caminhoArquivo);
+
+        response.data.on('data', chunk => {
+          downloaded += chunk.length;
+          if (totalLength) {
+            progressBar.update(downloaded, {
+              downloadedMB: (downloaded / 1024 / 1024).toFixed(2)
+            });
+          }
+        });
+
+        response.data.pipe(writer);
+
+        await new Promise((resolve, reject) => {
+          writer.on('finish', resolve);
+          writer.on('error', err => {
+            writer.destroy();
+            reject(err);
+          });
+          response.data.on('error', err => {
+            writer.destroy();
+            reject(err);
+          });
+        });
+
+        progressBar.stop();
+        break; 
+      } catch (err) {
+        if (tentativa < MAX_RETRY) {
+          console.log(`🔁 Tentando novamente '${nomeArquivo}'... (${tentativa})`);
+          await new Promise(r => setTimeout(r, 5000));
+        } else {
+          throw err;
+        }
+      }
+    }
   } catch (error) {
     console.error(`❌ Erro ao baixar ${nomeArquivo}:`, error.message);
   } finally {
-    barra.increment();
+    barraGeral.increment();
   }
 }
 
 async function processarEmLotes(lista, limite, funcao) {
   const fila = [...lista];
-
   while (fila.length > 0) {
     const lote = fila.splice(0, limite);
-    await Promise.allSettled(
-      lote.map(item => funcao(item))
-    );
+    await Promise.allSettled(lote.map(funcao));
   }
 }
 
 export default async function dowloadArquivos() {
-
   await processarEmLotes(arquivos, MAX_CONCURRENT_DOWNLOADS, baixarArquivo);
-  barra.stop();
+  barraGeral.stop();
   console.log("🏁 Todos os downloads concluídos.");
 }
 
-dowloadArquivos(); 
+dowloadArquivos();

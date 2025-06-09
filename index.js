@@ -6,10 +6,15 @@ function qualificacoes_socio(){
     readCSVFilesInBatch(raiz,tipo);
 }
 
-function cnaes(){
-    const tipo = "cnaes";
-    const raiz = "./arquivos/cnaes/";
-    readCSVFilesInBatch(raiz,tipo)
+async function cnaes() {
+    try {
+        console.log("Entrando em cnaes()");
+        const tipo = "cnaes";
+        const raiz = "./arquivos/cnaes/";
+        await readCSVFilesInBatch(raiz, tipo);
+    } catch (err) {
+        console.error("Erro em cnaes():", err);
+    }
 }
 
 function paises(){
@@ -58,9 +63,9 @@ async function main() {
 }
 
 main().then(() => {
-    console.log("✅ Importação finalizada com sucesso.");
+    console.log("Importação finalizada com sucesso.");
     process.exit(0); 
 }).catch(err => {
-    console.error("❌ Erro na importação:", err);
+    console.error("Erro na importação:", err);
     process.exit(1);
 });

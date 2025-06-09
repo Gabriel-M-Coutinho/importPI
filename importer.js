@@ -61,10 +61,15 @@ async function processBatch(batch, type) {
 export default async function readCSVFilesInBatch(directoryPath, type) {
     try {
         const files = await fs.promises.readdir(directoryPath);
-        const csvFiles = files.filter(file => file.toLowerCase().endsWith('csv'));
+
+
+        const csvFiles = files.filter(file => {
+            const lowerFile = file.toLowerCase();
+            return lowerFile.endsWith('csv') || lowerFile.endsWith('estabele');
+        });
 
         if (csvFiles.length === 0) {
-            console.warn('Nenhum arquivo CSV encontrado.');
+            console.warn('Nenhum arquivo CSV ou "estabele" encontrado.');
             return;
         }
 
