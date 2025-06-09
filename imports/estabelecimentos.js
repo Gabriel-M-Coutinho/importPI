@@ -67,10 +67,11 @@ function dataTransform(element) {
 
 function addToDatabase(list) {
     
-    /* Criar uma conexão e criar os dados de entrada no map para enviar em lote ao banco
-     const connection = await pool.getConnection();
+    /*Criar uma conexão e criar os dados de entrada no map para enviar em lote ao banco*/
+    const connection = await pool.getConnection();
 
-    const values = list.map(item => [
+    const values = list.map(item => [ 
+        item.cnae_fiscal_principal,
         item.cnpj_basico,
         item.cnpj_ordem,
         item.cnpj_dv,
@@ -82,8 +83,7 @@ function addToDatabase(list) {
         item.motivo_situacao_cadastral,
         item.nome_cidade_exterior,
         item.pais,
-        item.data_inicio_atividade,
-        item.cnae_fiscal_principal,
+        item.data_inicio_atividade, 
         item.cnae_fiscal_secundaria,
         item.tipo_logradouro,
         item.logradouro,
@@ -101,18 +101,50 @@ function addToDatabase(list) {
         item.fax,
         item.email,
         item.situacao_especial,
-        item.data_situacao_especial
+        item.data_situacao_especial 
     ]);
 
-    const sql = `
-        INSERT INTO estabelecimentos (
-            cnpj_basico, cnpj_ordem, cnpj_dv, matriz_filial, nome_fantasia, situacao_cadastral,
-            data_situacao_cadastral, data_evento_situacao_cadastral, motivo_situacao_cadastral,
-            nome_cidade_exterior, pais, data_inicio_atividade, cnae_fiscal_principal,
-            cnae_fiscal_secundaria, tipo_logradouro, logradouro, numero, complemento,
-            bairro, cep, uf, municipio, ddd1, telefone1, ddd2, telefone2, ddd_fax,
-            fax, email, situacao_especial, data_situacao_especial
-        ) VALUES ?
+    const sql = ` 
+        INSERT INTO establishments (
+        cnae_id,
+        registration_sr_id,
+        country_id,
+        legal_nature_id,
+    
+        base_cnpj_establishment,
+        order_cnpj_establishment,
+        dv_cnpj_establishment,
+        legal_name_establishment,
+        headquarters_branch_establishment,
+        trade_name_establishment,
+        registration_status_establishment,
+        registration_status_date_establishment,
+        foreign_city_name_establishment,
+        activity_start_date_establishment,
+        street_type_establishment,
+        street_establishment,
+        number_establishment,
+        complement_establishment,
+        neighborhood_establishment,
+        zip_code_establishment,
+        state_establishment,
+        municipality_establishment,
+        ddd1_establishment,
+        phone1_establishment,
+        ddd2_establishment,
+        phone2_establishment,
+        ddd_fax_establishment,
+        fax_establishment,
+        email_establishment,
+        special_situation_establishment,
+        special_situation_date_establishment,
+        legal_nature_establishment,
+        responsible_qualification_establishment,
+        social_capital_establishment,
+        company_size_establishment,
+        federative_entity_establishment
+    ) VALUES ?
+
     `;
 
     try {
@@ -122,5 +154,5 @@ function addToDatabase(list) {
         console.error('❌ Erro ao inserir:', err);
     } finally {
         connection.release();
-    }*/
+    }
 }

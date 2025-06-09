@@ -13,7 +13,7 @@ const dataAtual = new Date();
 const ano = dataAtual.getFullYear();
 const mes = String(dataAtual.getMonth() + 1).padStart(2, '0');
 
-const baseUrl = `https://arquivos.receitafederal.gov.br/dados/cnpj/dados_abertos_cnpj/${ano}-${mes}/`;
+const baseUrl = `https://arquivos.receitafederal.gov.br/dados/cnpj/dados_abertos_cnpj/${ano}-05/`;
 
 const arquivos = [
   "Cnaes.zip", "Empresas0.zip", "Empresas1.zip", "Empresas2.zip", "Empresas3.zip",
@@ -27,7 +27,7 @@ const arquivos = [
   "Socios5.zip", "Socios6.zip", "Socios7.zip", "Socios8.zip", "Socios9.zip"
 ];
 
-const MAX_CONCURRENT_DOWNLOADS = 4;
+const MAX_CONCURRENT_DOWNLOADS = 3;
 
 
 const barra = new cliProgress.SingleBar({
@@ -82,4 +82,4 @@ export default async function dowloadArquivos() {
   console.log("🏁 Todos os downloads concluídos.");
 }
 
-
+dowloadArquivos(); 

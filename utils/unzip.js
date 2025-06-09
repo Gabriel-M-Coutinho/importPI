@@ -54,5 +54,5 @@ async function unzipAllInDirectory(dir) {
 }
 
 // Exemplo de uso
-const directoryPath = '../dowloads/';
+const directoryPath = "../arquivos/";
 unzipAllInDirectory(directoryPath).catch(console.error);

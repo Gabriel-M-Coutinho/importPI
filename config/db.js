@@ -1,12 +1,13 @@
 import mysql from 'mysql2/promise';
 
-const dbConfig = {
+const pool = mysql.createPool({
   host: 'localhost',
-  user: 'seu_usuario',
-  password: 'sua_senha',
-  database: 'seu_banco_de_dados'
-};
+  user: 'root',
+  password: '',
+  database: 'leadssearch',
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0
+});
 
-const connection = await mysql.createConnection(dbConfig);
-
-export default connection;
+export default pool;

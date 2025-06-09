@@ -3,11 +3,12 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import csv from '@fast-csv/parse';
 import processCnae from "./imports/cnaes.js";
+import processEmpresas from "./imports/empresas.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const batchSize = 10000;
+const batchSize = 1000; 
 
 
 const processors = {
@@ -15,7 +16,7 @@ const processors = {
     // estabelecimentos: processEstabelecimentos,
     // pais: processPais,
     // socios: processSocios,
-    // empresas: processEmpresas,
+    empresas: processEmpresas
 };
 
 function processCSVFile(filePath, type) {
@@ -69,8 +70,4 @@ export default function readCSVFilesInBatch(directoryPath, type) {
             });
         });
     });
-}
-
-
-
-
+} 
