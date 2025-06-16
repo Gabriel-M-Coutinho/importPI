@@ -4,7 +4,7 @@ export default async function processEmpresas(batch) {
     const list = batch.map(element => ({
         cnpj_basico: element[0],
         razao_social: element[1],
-        natureza_juridica: element[2],
+        natureza_juridica: Number(element[2]),
         qualificacao_responsavel: Number(element[3]),
         capital_social: Number(element[4].replace(",", ".")),
         porte_empresa: Number(element[5]),
