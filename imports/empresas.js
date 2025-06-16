@@ -20,6 +20,8 @@ async function addToDatabase(list) {
     const values = list.map(item => [
         item.cnpj_basico,
         item.razao_social,
+        item.natureza_juridica,
+
         item.qualificacao_responsavel,
         item.capital_social,
         item.porte_empresa,
@@ -30,6 +32,7 @@ async function addToDatabase(list) {
         INSERT INTO companies (
             base_cnpj_company,
             legal_name_company,
+            legal_nature_id,
             responsible_qualification_company,
             social_capital_company,
             company_size_company,
