@@ -43,8 +43,8 @@ async function motivosSC() {
 
 async function naturezas_juridica() {
     try {
-        const tipo = "naturezas_juridica";
-        const raiz = "./arquivos/naturezas_juridica/";
+        const tipo = "naturezas";
+        const raiz = "./arquivos/Naturezas/";
         await readCSVFilesInBatch(raiz, tipo);
     } catch (err) {
         console.error("Erro em naturezas_juridica():", err);

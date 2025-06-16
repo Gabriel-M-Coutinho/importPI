@@ -5,6 +5,8 @@ import csv from '@fast-csv/parse';
 import processCnae from "./imports/cnaes.js";
 import processEmpresas from "./imports/empresas.js";
 import processEstabelecimentos from "./imports/estabelecimentos.js";
+import processQualificacaoSocio from './imports/qualificacaoSocio.js';
+import processNaturezaLegal from './imports/naturezaJuridica.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -14,6 +16,8 @@ const batchSize = 1000;
 
 const processors = {
     cnaes: processCnae,
+    qualificacoes_socio:processQualificacaoSocio,
+    naturezas:processNaturezaLegal,
     // estabelecimentos: processEstabelecimentos,
     // pais: processPais,
     // socios: processSocios,
@@ -23,7 +27,7 @@ const processors = {
 
 function processCSVFile(filePath, type) {
     return new Promise((resolve, reject) => {
-        const stream = fs.createReadStream(filePath, { encoding: 'latin1' }); // continua com encoding se precisar
+        const stream = fs.createReadStream(filePath, { encoding: 'latin1' }); 
         const parser = csv.parse({ delimiter: ';', headers: false });
 
         let batch = [];

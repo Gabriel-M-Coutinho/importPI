@@ -10,8 +10,9 @@ const __dirname = dirname(__filename);
 
 const dataAtual = new Date();
 const ano = dataAtual.getFullYear();
+const mes = dataAtual.getMonth();
 
-const baseUrl = `https://arquivos.receitafederal.gov.br/dados/cnpj/dados_abertos_cnpj/${ano}-05/`; 
+const baseUrl = `https://arquivos.receitafederal.gov.br/dados/cnpj/dados_abertos_cnpj/${ano}-${mes-1}/`; 
 
 const arquivos = [
   "Cnaes.zip", "Empresas0.zip", "Empresas1.zip", "Empresas2.zip", "Empresas3.zip",
