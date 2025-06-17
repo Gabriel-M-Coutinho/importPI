@@ -1,16 +1,29 @@
 import pool from "../config/db.js";
+const situacaoMap = {
+  1: 'NULA',
+  2: 'ATIVA',
+  3: 'SUSPENSA',
+  4: 'INAPTA',
+  5: 'BAIXADA'
+};
 
-function dataMySQL(data){
-    if(!data || data.trim() === ''){
-        return null; 
+function dataMySQL(data) {
+    if (!data || data.trim() === '' || data.length < 8) {
+        return null;
     }
     const year = data.substring(0, 4);
     const month = data.substring(4, 6);
     const day = data.substring(6, 8);
+
+    if (
+        isNaN(year) || isNaN(month) || isNaN(day) ||
+        Number(month) < 1 || Number(month) > 12 ||
+        Number(day) < 1 || Number(day) > 31
+    ) {
+        return null;
+    }
     return `${year}-${month}-${day}`;
 }
-
-
 export default async function processEstabelecimentos(batch) {
     const list = batch.map(element => {
         const dataSituacaoCadastral = dataMySQL(element[6]);
@@ -55,81 +68,78 @@ export default async function processEstabelecimentos(batch) {
 }
 
 async function addToDatabase(list) {
-    
-    /*Criar uma conexão e criar os dados de entrada no map para enviar em lote ao banco*/
     const connection = await pool.getConnection();
-
-    const values = list.map(item => [
-        item.cnae_fiscal_principal,
-        item.motivo_situacao_cadastral,
-        item.municipio,
-        item.pais,
-        item.cnpj_basico,
-        item.cnpj_ordem,
-        item.cnpj_dv,
-        item.matriz_filial,
-        item.nome_fantasia,
-        item.situacao_cadastral,
-        item.data_situacao_cadastral,
-        item.nome_cidade_exterior,
-        item.data_inicio_atividade,
-        item.cnae_fiscal_secundaria,
-        item.tipo_logradouro,
-        item.logradouro,
-        item.numero,
-        item.complemento,
-        item.bairro,
-        item.cep,
-        item.uf,
-        item.ddd1,
-        item.telefone1,
-        item.ddd2,
-        item.telefone2,
-        item.ddd_fax,
-        item.fax,
-        item.email,
-        item.situacao_especial,
-        item.data_situacao_especial,
-    ]);
-
-    const sql = `
-        INSERT INTO establishments (
-            cnae_id,
-            registration_sr_id,
-            municipality_id ,
-            country_id,
-            base_cnpj_company,
-            order_cnpj_establishment,
-            dv_cnpj_establishment,
-            headquarters_branch_establishment,
-            trade_name_establishment,
-            registration_status_establishment,
-            registration_status_date_establishment,
-            foreign_city_name_establishment,
-            activity_start_date_establishment,
-
-            cnae_secundario_temporario,
-
-            street_type_establishment,
-            street_establishment,
-            number_establishment,
-            complement_establishment,
-            neighborhood_establishment,
-            zip_code_establishment,
-            state_establishment,
-            ddd1_establishment,
-            phone1_establishment,
-            ddd2_establishment,
-            phone2_establishment,
-            ddd_fax_establishment,
-            fax_establishment,
-            email_establishment,
-            special_situation_establishment,
-            special_situation_date_establishment
-        ) VALUES ?`;
-
     try {
+        const maxComplementLength = 100; 
+        const values = list.map(item => [
+            item.cnae_fiscal_principal,
+            item.motivo_situacao_cadastral,
+            item.municipio,
+            item.pais,
+            item.cnpj_basico,
+            item.cnpj_ordem,
+            item.cnpj_dv,
+            item.matriz_filial,
+            item.nome_fantasia,
+            situacaoMap[item.situacao_cadastral] || null,
+            item.data_situacao_cadastral,
+            item.nome_cidade_exterior,
+            item.data_inicio_atividade,
+            item.cnae_fiscal_secundaria,
+            item.tipo_logradouro,
+            item.logradouro,
+            item.numero,
+            item.complemento && item.complemento.length > maxComplementLength ? item.complemento.substring(0, maxComplementLength) : item.complemento,
+            item.bairro,
+            item.cep,
+            item.uf,
+            item.ddd1,
+            item.telefone1,
+            item.ddd2,
+            item.telefone2,
+            item.ddd_fax,
+            item.fax,
+            item.email,
+            item.situacao_especial,
+            item.data_situacao_especial,
+        ]);
+
+        const sql = `
+            INSERT INTO establishments (
+                cnae_id,
+                registration_sr_id,
+                municipality_id ,
+                country_id,
+                base_cnpj_company,
+                order_cnpj_establishment,
+                dv_cnpj_establishment,
+                headquarters_branch_establishment,
+                trade_name_establishment,
+                registration_status_establishment,
+                registration_status_date_establishment,
+                foreign_city_name_establishment,
+                activity_start_date_establishment,
+                cnae_secundario_temporario,
+                street_type_establishment,
+                street_establishment,
+                number_establishment,
+                complement_establishment,
+                neighborhood_establishment,
+                zip_code_establishment,
+                state_establishment,
+                ddd1_establishment,
+                phone1_establishment,
+                ddd2_establishment,
+                phone2_establishment,
+                ddd_fax_establishment,
+                fax_establishment,
+                email_establishment,
+                special_situation_establishment,
+                special_situation_date_establishment
+            ) VALUES ?`;
+
         await connection.query(sql, [values]);
+
         console.log(`✅ Inseridos ${values.length} registros no banco`);
     } catch (err) {
         console.error("❌ Erro ao inserir:", err);

@@ -101,7 +101,7 @@ async function main() {
     await paises();
     await empresas();
     // await socios();
-    //await estabelecimentos();
+    await estabelecimentos();
 }
 
 main().then(() => {
