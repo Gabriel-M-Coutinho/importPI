@@ -1,8 +1,8 @@
 import pool from "../config/db.js";
 
 function dataMySQL(data){
-    if(data === ''){
-        return '';
+    if(!data || data.trim() === ''){
+        return null; 
     }
     const year = data.substring(0, 4);
     const month = data.substring(4, 6);
@@ -10,18 +10,6 @@ function dataMySQL(data){
     return `${year}-${month}-${day}`;
 }
 
-const matrizFilialMap = {
-    1: 'MATRIZ',
-    2: 'FILIAL'
-}
-
-const situacaoCadastralMap = {
-    1: 'NULA',
-    2: 'ATIVA',
-    3: 'SUSPENSA',
-    4: 'INAPTA',
-    8: 'BAIXADA'
-}
 
 export default async function processEstabelecimentos(batch) {
     const list = batch.map(element => {
@@ -33,13 +21,13 @@ export default async function processEstabelecimentos(batch) {
             cnpj_basico: element[0],
             cnpj_ordem: element[1],
             cnpj_dv: element[2],
-            matriz_filial: matrizFilialMap[Number(element[3])],
+            matriz_filial: Number(element[3]),
             nome_fantasia: element[4],
-            situacao_cadastral: situacaoCadastralMap[Number(element[5])],
+            situacao_cadastral:  Number(element[5]),
             data_situacao_cadastral: dataSituacaoCadastral,
             motivo_situacao_cadastral: element[7],
             nome_cidade_exterior: element[8],
-            pais: element[9],
+            pais: element[9] === '' ? null : Number(element[9]),
             data_inicio_atividade: dataInicioAtividade,
             cnae_fiscal_principal: Number(element[11]),
             cnae_fiscal_secundaria: element[12],
@@ -77,7 +65,6 @@ async function addToDatabase(list) {
         item.municipio,
         item.pais,
         item.cnpj_basico,
-
         item.cnpj_ordem,
         item.cnpj_dv,
         item.matriz_filial,
@@ -86,7 +73,7 @@ async function addToDatabase(list) {
         item.data_situacao_cadastral,
         item.nome_cidade_exterior,
         item.data_inicio_atividade,
-        //item.cnae_fiscal_secundaria,
+        item.cnae_fiscal_secundaria,
         item.tipo_logradouro,
         item.logradouro,
         item.numero,
@@ -109,10 +96,9 @@ async function addToDatabase(list) {
         INSERT INTO establishments (
             cnae_id,
             registration_sr_id,
-            municipality_id,
+            municipality_id ,
             country_id,
             base_cnpj_company,
-
             order_cnpj_establishment,
             dv_cnpj_establishment,
             headquarters_branch_establishment,
@@ -121,6 +107,9 @@ async function addToDatabase(list) {
             registration_status_date_establishment,
             foreign_city_name_establishment,
             activity_start_date_establishment,
+
+            cnae_secundario_temporario,
+
             street_type_establishment,
             street_establishment,
             number_establishment,
@@ -136,7 +125,7 @@ async function addToDatabase(list) {
             fax_establishment,
             email_establishment,
             special_situation_establishment,
-            special_situation_date_establishment,
+            special_situation_date_establishment
         ) VALUES ?`;
 
     try {

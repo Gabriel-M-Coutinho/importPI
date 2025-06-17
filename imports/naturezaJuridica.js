@@ -14,7 +14,7 @@ async function addToDatabase(list) {
     const values = list.map(item => [item.code, item.description]);
 
     const sql = `
-        INSERT INTO legal_nature (
+        INSERT INTO legal_natures (
             id_legal_nature,
             description_legal_nature
         ) VALUES ?`;

@@ -14,7 +14,7 @@ async function municipios() {
 async function qualificacoes_socio() {
     try {
         const tipo = "qualificacoes_socio";
-        const raiz = "./arquivos/Cnaes/";
+        const raiz = "./arquivos/Qualificacoes/";
         await readCSVFilesInBatch(raiz, tipo);
     } catch (err) {
         console.error("Erro em qualificacoes_socio():", err);
@@ -25,7 +25,7 @@ async function cnaes() {
     try {
         console.log("Entrando em cnaes()");
         const tipo = "cnaes";
-        const raiz = "./arquivos/cnaes/";
+        const raiz = "./arquivos/Cnaes/";
         await readCSVFilesInBatch(raiz, tipo);
     } catch (err) {
         console.error("Erro em cnaes():", err);
@@ -35,7 +35,7 @@ async function cnaes() {
 async function paises() {
     try {
         const tipo = "paises";
-        const raiz = "./arquivos/paises/";
+        const raiz = "./arquivos/Paises/";
         await readCSVFilesInBatch(raiz, tipo);
     } catch (err) {
         console.error("Erro em paises():", err);
@@ -95,11 +95,13 @@ async function estabelecimentos() {
 
 async function main() {
     await cnaes();
-    // await qualificacoes_socio();
-    // await paises();
-    // await empresas();
+    await naturezas_juridica();
+    await municipios();
+    await qualificacoes_socio();
+    await paises();
+    await empresas();
     // await socios();
-    await estabelecimentos();
+    //await estabelecimentos();
 }
 
 main().then(() => {

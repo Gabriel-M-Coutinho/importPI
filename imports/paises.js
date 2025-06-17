@@ -15,19 +15,14 @@ export default function process(batch){
 
 
 }
-/*
-CREATE TABLE IF NOT EXISTS countries (
-id_country BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    description_country VARCHAR(70) NOT NULL
-);
-*/
+
 
 async function addToDatabase(list){
     const connection = await pool.getConnection();
     const values = list.map(item => [Number(item.code), item.description]);
 
     const sql = `
-        INSERT INTO cnaes (
+        INSERT INTO countries (
             id_country,
             description_country
         ) VALUES ?`;
