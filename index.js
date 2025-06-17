@@ -11,10 +11,6 @@ async function municipios() {
     }
 }
 
-
-
-
-
 async function qualificacoes_socio() {
     try {
         const tipo = "qualificacoes_socio";
@@ -101,7 +97,7 @@ async function main() {
     await cnaes();
     // await qualificacoes_socio();
     // await paises();
-    //await empresas();
+    // await empresas();
     // await socios();
     await estabelecimentos();
 }

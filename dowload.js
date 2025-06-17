@@ -10,9 +10,9 @@ const __dirname = dirname(__filename);
 
 const dataAtual = new Date();
 const ano = dataAtual.getFullYear();
-const mes = dataAtual.getMonth();
+const mes = String(dataAtual.getMonth()).padStart(2, '0');
 
-const baseUrl = `https://arquivos.receitafederal.gov.br/dados/cnpj/dados_abertos_cnpj/${ano}-${mes-1}/`; 
+const baseUrl = `https://arquivos.receitafederal.gov.br/dados/cnpj/dados_abertos_cnpj/${ano}-${mes}/`; 
 
 const arquivos = [
   "Cnaes.zip", "Empresas0.zip", "Empresas1.zip", "Empresas2.zip", "Empresas3.zip",
@@ -60,7 +60,6 @@ async function baixarArquivo(nomeArquivo) {
           responseType: 'stream',
           timeout: 600000, 
         });
-
         const totalLength = response.headers['content-length'];
         const totalMB = totalLength ? (totalLength / 1024 / 1024).toFixed(2) : 'Desconhecido';
 
@@ -131,6 +130,7 @@ export default async function dowloadArquivos() {
   await processarEmLotes(arquivos, MAX_CONCURRENT_DOWNLOADS, baixarArquivo);
   barraGeral.stop();
   console.log("🏁 Todos os downloads concluídos.");
+  require("./index.js");
 }
 
 dowloadArquivos();
