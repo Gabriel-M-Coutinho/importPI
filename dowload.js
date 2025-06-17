@@ -130,7 +130,6 @@ export default async function dowloadArquivos() {
   await processarEmLotes(arquivos, MAX_CONCURRENT_DOWNLOADS, baixarArquivo);
   barraGeral.stop();
   console.log("🏁 Todos os downloads concluídos.");
-  require("./index.js");
 }
 
 dowloadArquivos();

@@ -44,7 +44,7 @@ async function unzipFile(zipFilePath, outputDir) {
   }
 }
 
-async function unzipAllInDirectory(dir) {
+export default async function unzipAllInDirectory(dir) {
   const zipFiles = findZipFiles(dir);
 
   for (const zipFile of zipFiles) {
