@@ -1,5 +1,20 @@
 import readCSVFilesInBatch from "./importer.js"
 
+
+async function municipios() {
+    try {
+        const tipo = "municipios";
+        const raiz = "./arquivos/Municipios/";
+        await readCSVFilesInBatch(raiz, tipo);
+    } catch (err) {
+        console.error("Erro em qualificacoes_socio():", err);
+    }
+}
+
+
+
+
+
 async function qualificacoes_socio() {
     try {
         const tipo = "qualificacoes_socio";

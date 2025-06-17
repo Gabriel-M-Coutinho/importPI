@@ -7,6 +7,7 @@ import processEmpresas from "./imports/empresas.js";
 import processEstabelecimentos from "./imports/estabelecimentos.js";
 import processQualificacaoSocio from './imports/qualificacaoSocio.js';
 import processNaturezaLegal from './imports/naturezaJuridica.js';
+import processMunicipios from './imports/municipios.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -18,6 +19,7 @@ const processors = {
     cnaes: processCnae,
     qualificacoes_socio:processQualificacaoSocio,
     naturezas:processNaturezaLegal,
+    municipios:processMunicipios,
     // estabelecimentos: processEstabelecimentos,
     // pais: processPais,
     // socios: processSocios,
