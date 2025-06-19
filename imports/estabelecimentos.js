@@ -40,7 +40,7 @@ export default async function processEstabelecimentos(batch) {
             data_situacao_cadastral: dataSituacaoCadastral,
             motivo_situacao_cadastral: element[7],
             nome_cidade_exterior: element[8],
-            pais: element[9] === '' ? null : Number(element[9]),
+            pais: element[9] === '' ? 999 : Number(element[9]),
             data_inicio_atividade: dataInicioAtividade,
             cnae_fiscal_principal: Number(element[11]),
             cnae_fiscal_secundaria: element[12],

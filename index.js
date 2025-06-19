@@ -45,7 +45,7 @@ async function paises() {
 async function motivosSC() {
     try {
         const tipo = "motivosSC";
-        const raiz = "./arquivos/motivosSC/";
+        const raiz = "./arquivos/Motivos/";
         await readCSVFilesInBatch(raiz, tipo);
     } catch (err) {
         console.error("Erro em motivosSC():", err);
@@ -94,14 +94,15 @@ async function estabelecimentos() {
 
 
 async function main() {
-    await cnaes();
-    await naturezas_juridica();
-    await municipios();
-    await qualificacoes_socio();
-    await paises();
-    await empresas();
-    // await socios();
-    await estabelecimentos();
+    //await cnaes();
+    //await naturezas_juridica();
+    //await municipios();
+    //await qualificacoes_socio();
+    //await paises();
+    //await motivosSC();
+    //await empresas();
+    //await socios();
+    //await estabelecimentos();
 }
 
 main().then(() => {

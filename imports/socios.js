@@ -11,18 +11,21 @@ function dataMySQL(data){
 }
 
 export default async function processSocios(batch) {
-    const list = batch.map(element => ({
+    const list = batch.map(element =>{
+        return { 
         cnpj_basico: element[0],
         identificador_socio: identificadorSocioMap[Number(element[1])],
         nomesocio: element[2],
-        qualificacao_socio: Number(element[3]),
-        dt_entrada_sociedade: dataMySQL(element[4]),
-        pais:Number(element[5]),
-        representante_legal:element[6],
-        nome_representante:element[7],
-        qualificacao_responsavel_legal: Number(element[8]),
-        faixa_etaria:Number(element[9])
-    }));
+        cpf_cnpj_socio: element[3],
+        qualificacao_socio: Number(element[4]),
+        dt_entrada_sociedade: dataMySQL(element[5]),
+        pais: element[6] === '' ? 999 : Number(element[6]),
+        representante_legal:element[7],
+        nome_representante:element[8],
+        qualificacao_responsavel_legal: Number(element[9]),
+        faixa_etaria:Number(element[10])
+        }
+    });
 
     await addToDatabase(list);
 }
@@ -42,7 +45,9 @@ async function addToDatabase(list) {
         item.cnpj_basico,
         item.identificador_socio,
         item.nomesocio,
-        item.qualificacao_responsavel,
+        item.cpf_cnpj_socio,
+        item.dt_entrada_sociedade,
+        item.qualificacao_socio,
         item.pais,
         item.representante_legal,
         item.nome_representante,
@@ -58,6 +63,8 @@ async function addToDatabase(list) {
             base_cnpj_company,
             partner_type_identifier,
             name_partner,
+            cpf_cnpj_partner,
+            entry_date_partner,
             partner_qualification_id,
             country_id,
             legal_representative_partner,

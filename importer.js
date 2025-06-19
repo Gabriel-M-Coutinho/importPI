@@ -10,6 +10,8 @@ import processQualificacaoSocio from './imports/qualificacaoSocio.js';
 import processNaturezaLegal from './imports/naturezaJuridica.js';
 import processMunicipios from './imports/municipios.js';
 import processCountries from './imports/paises.js';
+import processSocios from './imports/socios.js';
+import processMotivoSituacaoCadastral from './imports/motivo-situacao-cadastral.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -22,8 +24,9 @@ const processors = {
     municipios: processMunicipios,
     estabelecimentos: processEstabelecimentos,
     paises: processCountries,
-    empresas: processEmpresas
-
+    empresas: processEmpresas,
+    socios: processSocios,
+    motivosSC: processMotivoSituacaoCadastral
 };
 
 function processCSVFile(filePath, type) {
